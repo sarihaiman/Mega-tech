@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\miri-rizel-back",
+    "\\miri-rizel-back\\Bl",
+    "\\miri-rizel-back\\controllers",
+    "\\miri-rizel-back\\controllers\\Controller",
+    "\\miri-rizel-back\\Dal",
+    "\\miri-rizel-back\\Dto",
+    "\\miri-rizel-back\\Dto\\models"
+  ],
+  "SelectedNode": "\\miri-rizel-back\\Dto\\models\\CopyRightDProfile.cs",
+  "PreviewInSolutionExplorer": false
+}
