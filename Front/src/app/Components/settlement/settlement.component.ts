@@ -5,35 +5,44 @@ import { Settlement } from '../../Models/settlement.model';
 @Component({
   selector: 'app-settlement',
   templateUrl: './settlement.component.html',
-  styleUrl: './settlement.component.scss'
+  styleUrls: ['./settlement.component.scss']
 })
 export class SettlementComponent {
 
   constructor(private settlementService: SettlementService) {
-    settlementService.GetAll().subscribe((res: any) => this.settlementArr = res);
+    settlementService.GetAll().subscribe((res: any) => {
+      this.settlementArr = res;
+      this.filteredSettlements = res;
+    });
   }
 
   settlementArr: Settlement[] = [];
+  filteredSettlements: Settlement[] = [];
   nameS: string = "";
-  flag: boolean = true;
   showIndexBegin: number = 0;
 
   addSettlement() {
     this.settlementService.AddNewSettlement(this.nameS).subscribe(() =>
-      this.settlementService.GetAll().subscribe((res: any) => this.settlementArr = res))
+      this.settlementService.GetAll().subscribe((res: any) => {
+        this.settlementArr = res;
+        this.filteredSettlements = res;
+      }));
     this.nameS = '';
   }
 
   deleteS(se: any) {
     this.settlementService.DeleteSettlement(se.settlementId).subscribe(() =>
-      this.settlementService.GetAll().subscribe((res: any) => this.settlementArr = res))
+      this.settlementService.GetAll().subscribe((res: any) => {
+        this.settlementArr = res;
+        this.filteredSettlements = res;
+      }));
   }
 
   nameEdit: string = "";
   edit: Settlement = { settlementId: 0, settlementName: '' };
 
   up() {
-    this.settlementArr.sort((a, b) => {
+    this.filteredSettlements.sort((a, b) => {
       const nameA = a.settlementName?.toUpperCase() || '';
       const nameB = b.settlementName?.toUpperCase() || '';
       if (nameA < nameB) {
@@ -47,7 +56,7 @@ export class SettlementComponent {
   }
 
   down() {
-    this.settlementArr.sort((a, b) => {
+    this.filteredSettlements.sort((a, b) => {
       const nameA = a.settlementName?.toUpperCase() || '';
       const nameB = b.settlementName?.toUpperCase() || '';
       if (nameA < nameB) {
@@ -60,8 +69,6 @@ export class SettlementComponent {
     });
   }
 
-  filteredSettlements: Settlement[] = [];
-
   right() {
     this.showIndexBegin += 5;
   }
@@ -72,23 +79,21 @@ export class SettlementComponent {
 
   editIndex: number = -1;
 
-  editS(index: number,settlement: Settlement) {
+  editS(index: number, settlement: Settlement) {
     this.editIndex = index;
-    this.nameEdit=settlement.settlementName!;
+    this.nameEdit = settlement.settlementName!;
   }
 
   saveEdit(settlement: Settlement) {
     this.editIndex = -1;
-    console.log(this.nameEdit);
     this.edit.settlementName = this.nameEdit;
     this.edit.settlementId = settlement.settlementId;
-    console.log(this.edit);
     this.settlementService.EditSettlement(this.edit).subscribe(() =>
-      this.settlementArr.forEach(element => {
-        this.settlementService.GetAll().subscribe((res: any) => this.settlementArr = res)
-      })
-    )
-    this.nameEdit = ""
+      this.settlementService.GetAll().subscribe((res: any) => {
+        this.settlementArr = res;
+        this.filteredSettlements = res;
+      }));
+    this.nameEdit = "";
   }
 
   transliterationMap: { [key: string]: string } = {
@@ -110,7 +115,7 @@ export class SettlementComponent {
     'p': 'פ',
     'r': 'ר',
     's': 'ד',
-    't': 'ג',
+    't': 'א',
     'u': 'ו',
     'v': 'ה',
     'x': 'ס',
@@ -120,43 +125,25 @@ export class SettlementComponent {
     '.': 'ץ',
     ';': 'ף',
   };
-  
+
   search(event: Event): void {
-    this.settlementService.GetAll().subscribe((res: any) => this.settlementArr = res);
-    this.flag = false;
-    // הופך לאותיות קטנוץ
     const inputText = this.transliterateInput((event.target as HTMLInputElement).value.toLowerCase());
-    if (!this.settlementArr) {
-      this.settlementService.GetAll().subscribe((res: any) => {
-        this.settlementArr = res;
-        this.filterSettlements(inputText);
-      });
-    } else {
-      this.filterSettlements(inputText);
-    }
-    this.settlementArr=[];
-    this.filteredSettlements.forEach((element) => {
-      this.settlementArr.push(element)
-    })
-    console.log(this.settlementArr);
-    console.log(this.flag);
-    this.flag=true;
-    console.log(this.settlementArr);
-    console.log(this.flag);
+    this.filterSettlements(inputText);
   }
-  
+
+  //פונקציה הממירה לעברית למרות שהוקלד שונה
   transliterateInput(inputText: string): string {
-    return inputText.split('').map(char => this.transliterationMap[char] || char).join('');
+    return inputText.split('').map(char => this.transliterationMap[char.toLowerCase()] || char).join('');
   }
-  
+
+    //פונקציה לסינון הישובים המבוקשים
   filterSettlements(inputText: string): void {
     this.filteredSettlements = this.settlementArr.filter(settlement =>
       settlement.settlementName && this.normalizeText(settlement.settlementName).includes(this.normalizeText(inputText))
     );
   }
-  
+
   normalizeText(text: string): string {
     return text.replace(/[a-zA-Z]/g, (char) => this.transliterationMap[char.toLowerCase()] || char);
   }
-  
 }

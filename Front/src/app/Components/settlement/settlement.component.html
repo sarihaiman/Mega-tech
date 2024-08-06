@@ -1,29 +1,27 @@
-<div *ngIf="flag">
-     <div *ngFor="let i of settlementArr let i2=index">
-          <div *ngIf="i2==showIndexBegin || i2==showIndexBegin+1 || i2==showIndexBegin+2 || i2==showIndexBegin+3 || i2==showIndexBegin+4" id="settlement"
-           [ngClass]="{'settlementEdit': i2 === editIndex, 'editingHighlight': i2 === editIndex}">
-               <app-oneSettlement [se]="i"></app-oneSettlement>
-               <i class="material-icons" (click)="deleteS(i)">delete</i>
-               <i class="material-icons" (click)="editS(i2,i)">edit</i> 
-               <div *ngIf="i2 === editIndex">
-                    <input type="text" [(ngModel)]="nameEdit" placeholder="Enter new name">
-                    <button (click)="saveEdit(i)">Save</button>
-               </div>
+<div *ngFor="let i of filteredSettlements let i2=index">
+     <div *ngIf="i2>=showIndexBegin && i2<showIndexBegin+5"
+          id="settlement" [ngClass]="{'settlementEdit': i2 === editIndex, 'editingHighlight': i2 === editIndex}">
+          <app-oneSettlement [se]="i"></app-oneSettlement>
+          <i class="material-icons" (click)="deleteS(i)">delete</i>
+          <i class="material-icons" (click)="editS(i2,i)">edit</i>
+          <div *ngIf="i2 === editIndex">
+               <input type="text" [(ngModel)]="nameEdit" placeholder="Enter new name">
+               <button (click)="saveEdit(i)">Save</button>
           </div>
      </div>
-     <br />
-     <label for="newSettlement">
-          <input type="text" id="newSettlement" [(ngModel)]="nameS" name=name placeholder="Name Settlement">
-          <button (click)="addSettlement()">add</button>
-     </label>
-
-     <br /><br />
-     <button (click)="up()">מיון עולה</button>
-     <button (click)="down()">מיון יורד</button>
 </div>
-<br/>
+<br />
+<label for="newSettlement">
+     <input type="text" id="newSettlement" [(ngModel)]="nameS" name=name placeholder="Name Settlement">
+     <button (click)="addSettlement()">add</button>
+</label>
+
+<br /><br />
+<button (click)="up()">מיון עולה</button>
+<button (click)="down()">מיון יורד</button>
+<br />
 <button (click)="left()">left</button>
 <button (click)="right()">right</button>
-
+<br />
+<h3>חיפוש</h3>
 <input type="text" (input)="search($event)">
-
